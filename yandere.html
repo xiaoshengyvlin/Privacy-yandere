@@ -462,25 +462,38 @@ let pauseStart = null;
 let longestPause = 0;
 let scrollPauseWhispered = false;
 
+function fetchWithTimeout(url, opts, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(function(){ ctrl.abort(); }, ms);
+  var options = Object.assign({ signal: ctrl.signal }, opts || {});
+  return fetch(url, options).finally(function(){ clearTimeout(timer); });
+}
+
 async function getGeo() {
   const apis = [
-    async () => {
-      const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
-      if (!r.ok) throw new Error();
+    async function() {
+      const r = await fetchWithTimeout('https://ip-api.com/json/', null, 4000);
+      if (!r.ok) throw new Error('http');
       const j = await r.json();
-      if (j.error) throw new Error();
-      return { ip: j.ip, city: j.city, region: j.region, country: j.country_name, isp: j.org };
-    },
-    async () => {
-      const r = await fetch('http://ip-api.com/json/?fields=query,city,regionName,country,isp', { signal: AbortSignal.timeout(4000) });
-      if (!r.ok) throw new Error();
-      const j = await r.json();
-      if (j.status !== 'success') throw new Error();
+      if (j.status !== 'success') throw new Error('status');
       return { ip: j.query, city: j.city, region: j.regionName, country: j.country, isp: j.isp };
+    },
+    async function() {
+      const r = await fetchWithTimeout('https://api.ip.sb/geoip', null, 4000);
+      if (!r.ok) throw new Error('http');
+      const j = await r.json();
+      return { ip: j.ip, city: j.city, region: j.region||'', country: j.country, isp: j.isp||j.organization||'' };
+    },
+    async function() {
+      const r = await fetchWithTimeout('https://ipapi.co/json/', null, 4000);
+      if (!r.ok) throw new Error('http');
+      const j = await r.json();
+      if (j.error) throw new Error('error');
+      return { ip: j.ip, city: j.city, region: j.region, country: j.country_name, isp: j.org };
     }
   ];
-  for (const fn of apis) {
-    try { return await fn(); } catch (e) {}
+  for (var i = 0; i < apis.length; i++) {
+    try { return await apis[i](); } catch (e) {}
   }
   return null;
 }
