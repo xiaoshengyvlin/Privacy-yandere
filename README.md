@@ -1,6 +1,6 @@
 # 想了解你
 
-一个受 [taken.](https://sinceyouarrived.world/taken) 启发的病娇风浏览器隐私演示页面。
+一个受 [taken.](https://sinceyouarrived.world/taken) 启发的病娇风浏览器隐私演示页面；
 演示网站[yandere](https://yandere.0721001.xyz) 
 
 你打开它，回答一些看似无害的问题。它则在暗处收集你的浏览器指纹——屏幕、设备、语言、时区、显卡、字体、电量、IP 地址——然后在一句句病娇的低语中，把这些信息逐层返还给你。最后一页会显示你的城市和完整设备档案。
