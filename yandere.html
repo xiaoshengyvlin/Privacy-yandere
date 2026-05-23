@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>想了解你 — 致我最爱的人</title>
+<meta name="description" content="一个想了解你一切的人。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="icon.ico" type="image/x-icon">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #060609;
+    --fg:        #e8e4df;
+    --accent:    #d94455;
+    --accent-bright: #ff4466;
+    --accent-dim: #882233;
+    --accent-glow: rgba(217,68,85,0.2);
+    --dim:       #a09a92;
+    --faint:     #5a5550;
+    --fainter:   #302c29;
+    --serif:     'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+    --sans:      'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+    --mono:      'IBM Plex Mono', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    --card-bg:   #0c0b10;
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  html {
+    font-size: 17px;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--serif);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(160,30,45,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(140,30,45,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%),
+      var(--bg);
+  }
+
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 98;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(6,6,9,0.55) 100%);
+  }
+  .scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
+    opacity: 0.4;
+  }
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 99;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .page { width: 100%; max-width: 560px; padding: 0 28px; position: relative; z-index: 2; }
+
+  .heartbeat-indicator {
+    position: fixed; top: 22px; right: 22px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-bright);
+    box-shadow: 0 0 6px var(--accent-glow), 0 0 16px var(--accent-glow);
+    z-index: 10; opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .heartbeat-indicator.visible { opacity: 1; animation: heartbeat 1.4s ease-in-out infinite; }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    15% { transform: scale(1.35); opacity: 1; }
+    30% { transform: scale(1); opacity: 0.6; }
+    45% { transform: scale(1.35); opacity: 1; }
+    60% { transform: scale(1); opacity: 0.6; }
+  }
+
+  .intro { text-align: center; padding: 15vh 0 2.5vh; }
+  .series-label {
+    font-family: var(--mono); font-size: 0.52rem;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 2.5rem;
+    opacity: 0; animation: appear 1.2s ease forwards 0.2s;
+  }
+  .title {
+    font-family: var(--serif); font-size: 2.6rem; font-weight: 300;
+    line-height: 1.15; letter-spacing: 0.06em; color: var(--fg);
+    opacity: 0; animation: appear 1.6s var(--ease-out-expo) forwards 0.8s;
+  }
+  .title .accent-dot {
+    color: var(--accent-bright); display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite 2.4s;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; text-shadow: 0 0 0 transparent; }
+    50% { opacity: 0.5; text-shadow: 0 0 14px var(--accent-glow); }
+  }
+  .subtitle {
+    font-family: var(--serif); font-size: 0.95rem; font-style: italic;
+    color: var(--dim); margin-top: 2rem;
+    opacity: 0; animation: appear 1.2s ease forwards 2s;
+    letter-spacing: 0.03em;
+  }
+
+  .scanning {
+    text-align: center; padding: 4vh 0 1.5vh;
+    opacity: 0; animation: appear 0.7s ease forwards 2.6s;
+  }
+  .scanning.done { display: none; }
+  .scanning-text {
+    font-family: var(--mono); font-size: 0.56rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint);
+    animation: breathe 2.2s ease-in-out infinite;
+  }
+  @keyframes breathe { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+  .scanning-pulse {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent-dim); margin: 1rem auto 0;
+    animation: scanPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes scanPulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+    50% { box-shadow: 0 0 0 8px transparent; }
+  }
+
+  .chat-area { padding: 1.5vh 0; }
+
+  .q-card {
+    margin-bottom: 3rem; opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.75s var(--ease-out-expo), transform 0.75s var(--ease-out-expo);
+    will-change: transform, opacity;
+  }
+  .q-card.visible { opacity: 1; transform: translateY(0); }
+  .q-card.completed {
+    opacity: 0.45; transform: scale(0.97);
+    pointer-events: none; margin-bottom: 1rem;
+    transition: all 0.6s var(--ease-out-expo);
+  }
+
+  .q-number {
+    font-family: var(--mono); font-size: 0.52rem;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--accent-dim); margin-bottom: 0.7rem;
+    opacity: 0; transition: opacity 0.5s ease 0.2s;
+  }
+  .q-card.visible .q-number { opacity: 1; }
+
+  .q-text {
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 400;
+    line-height: 1.65; color: var(--fg); margin-bottom: 1.3rem;
+    letter-spacing: 0.03em;
+  }
+
+  .q-options {
+    display: flex; flex-direction: column; gap: 0.45rem;
+  }
+  .q-option {
+    display: block; width: 100%;
+    background: transparent;
+    border: 1px solid var(--fainter);
+    color: var(--dim);
+    font-family: var(--serif); font-size: 0.95rem;
+    padding: 0.85rem 1.1rem;
+    cursor: pointer;
+    transition: all 0.35s var(--ease-out-expo);
+    text-align: left; letter-spacing: 0.03em;
+    position: relative; opacity: 0;
+    transform: translateX(-10px);
+    will-change: transform, opacity;
+  }
+  .q-option.reveal { opacity: 1; transform: translateX(0); }
+  .q-option:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+  .q-option::before {
+    content: ''; position: absolute;
+    left: 0; top: 25%; bottom: 25%; width: 2px;
+    background: transparent; transition: background 0.3s ease;
+  }
+  .q-option:hover {
+    border-color: var(--accent-dim); color: var(--fg);
+    background: rgba(180,40,55,0.04);
+    box-shadow: 0 0 12px rgba(180,40,55,0.06);
+  }
+  .q-option:active { transform: scale(0.975); transition: transform 0.08s ease; }
+  .q-option:hover::before { background: var(--accent-dim); }
+  .q-option.selected {
+    border-color: var(--accent-bright); color: var(--accent-bright);
+    background: rgba(180,40,55,0.07); transform: translateX(4px);
+  }
+  .q-option.selected::before { background: var(--accent-bright); }
+  .q-option.dimmed {
+    pointer-events: none; opacity: 0.3;
+    transform: translateX(-4px); transition: all 0.45s ease;
+  }
+  .q-option.dimmed.selected { opacity: 0.9; transform: translateX(0); }
+
+  .q-summary {
+    font-family: var(--serif); font-size: 0.82rem;
+    color: var(--faint); font-style: italic;
+    padding: 0.2rem 0; opacity: 0;
+    transition: opacity 0.5s ease; letter-spacing: 0.03em;
+  }
+  .q-summary.visible { opacity: 1; }
+  .q-summary .q-summary-a { color: var(--accent-dim); }
+
+  .yandere-obs {
+    margin: 1rem 0 3rem;
+    padding: 1.3rem 1.3rem 1.3rem 1.1rem;
+    background: var(--card-bg);
+    border-left: 2px solid var(--accent-dim);
+    opacity: 0; transform: translateX(-10px);
+    transition: all 0.6s var(--ease-out-expo);
+    position: relative; overflow: hidden;
+  }
+  .yandere-obs::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, var(--accent-dim), transparent);
+    opacity: 0; transition: opacity 0.5s ease 0.4s;
+  }
+  .yandere-obs.visible { opacity: 1; transform: translateX(0); }
+  .yandere-obs.visible::after { opacity: 1; }
+  .yandere-obs::before {
+    content: '她说'; position: absolute; top: -9px; left: 10px;
+    font-family: var(--mono); font-size: 0.5rem;
+    letter-spacing: 0.22em; color: var(--accent-dim);
+    background: var(--bg); padding: 0 6px;
+    opacity: 0; transition: opacity 0.4s ease 0.5s;
+  }
+  .yandere-obs.visible::before { opacity: 1; }
+  .yandere-line {
+    font-family: var(--serif); font-size: 0.95rem;
+    line-height: 1.85; color: var(--dim); letter-spacing: 0.025em;
+    opacity: 0; transition: opacity 0.5s ease 0.15s;
+  }
+  .yandere-obs.visible .yandere-line { opacity: 1; }
+  .yandere-line em { color: var(--accent-bright); font-style: normal; font-weight: 600; }
+  .yandere-line .murmur { color: var(--faint); font-size: 0.85rem; font-style: italic; }
+
+  .tab-notice {
+    position: fixed; top: 0; left: 0; right: 0;
+    font-family: var(--mono); font-size: 0.55rem;
+    letter-spacing: 0.12em; color: var(--accent-bright);
+    text-align: center; padding: 0.8rem 1rem;
+    background: rgba(8,8,12,0.95);
+    border-bottom: 1px solid var(--accent-dim);
+    opacity: 0; transform: translateY(-100%);
+    transition: all 0.5s var(--ease-out-expo);
+    z-index: 200; pointer-events: none;
+  }
+  .tab-notice.visible { opacity: 1; transform: translateY(0); }
+
+  .scroll-whisper {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    font-family: var(--serif); font-size: 0.8rem; font-style: italic;
+    color: var(--accent-dim); text-align: center;
+    pointer-events: none; z-index: 150;
+    opacity: 0; transition: opacity 0.8s ease;
+    background: rgba(8,8,12,0.8); padding: 0.6rem 1.2rem; border-radius: 2px;
+  }
+  .scroll-whisper.visible { opacity: 1; }
+
+  .behav-summary {
+    text-align: center; padding: 3vh 0 4vh;
+    opacity: 0; transform: translateY(16px);
+    transition: all 0.9s var(--ease-out-expo); display: none;
+  }
+  .behav-summary.visible { opacity: 1; transform: translateY(0); }
+  .behav-divider {
+    width: 30px; height: 1px; background: var(--fainter);
+    margin: 0 auto 2rem; opacity: 0;
+    transition: opacity 0.6s ease 0.3s;
+  }
+  .behav-summary.visible .behav-divider { opacity: 1; }
+  .behav-label {
+    font-family: var(--mono); font-size: 0.5rem;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--accent-dim); margin-bottom: 2rem;
+    opacity: 0; transition: opacity 0.5s ease 0.6s;
+  }
+  .behav-summary.visible .behav-label { opacity: 1; }
+  .behav-text {
+    font-family: var(--serif); font-size: 0.92rem; line-height: 2;
+    color: var(--dim); max-width: 460px; margin: 0 auto;
+    opacity: 0; transition: opacity 0.7s ease 1s;
+  }
+  .behav-summary.visible .behav-text { opacity: 1; }
+  .behav-text em { color: var(--accent-bright); font-style: normal; font-weight: 600; }
+
+  .final-reveal {
+    text-align: center; padding: 5vh 0 6vh;
+    opacity: 0; transform: translateY(24px);
+    transition: all 1s var(--ease-out-expo); display: none;
+  }
+  .final-reveal.visible { opacity: 1; transform: translateY(0); }
+  .final-divider {
+    width: 36px; height: 1px; background: var(--accent-dim);
+    margin: 0 auto 2.5rem; opacity: 0;
+    transition: opacity 0.7s ease 0.4s;
+  }
+  .final-reveal.visible .final-divider { opacity: 1; }
+  .final-label {
+    font-family: var(--mono); font-size: 0.52rem;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--accent-dim); margin-bottom: 2rem;
+    opacity: 0; transition: opacity 0.5s ease 0.7s;
+  }
+  .final-reveal.visible .final-label { opacity: 1; }
+  .final-location {
+    font-family: var(--serif); font-size: 2.2rem; font-weight: 300;
+    line-height: 1.4; color: var(--fg); margin-bottom: 0.7rem;
+    letter-spacing: 0.05em;
+    opacity: 0; transition: opacity 0.9s var(--ease-out-expo) 1s;
+  }
+  .final-reveal.visible .final-location { opacity: 1; }
+  .final-detail {
+    font-family: var(--mono); font-size: 0.6rem;
+    color: var(--faint); letter-spacing: 0.07em;
+    margin-bottom: 2.5rem; line-height: 1.8;
+    opacity: 0; transition: opacity 0.7s ease 1.4s;
+  }
+  .final-reveal.visible .final-detail { opacity: 1; }
+  .final-threat {
+    font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
+    font-style: italic; color: var(--accent-bright);
+    letter-spacing: 0.07em; margin-bottom: 2rem;
+    opacity: 0; transition: all 0.9s var(--ease-out-back) 1.8s;
+  }
+  .final-reveal.visible .final-threat { opacity: 1; text-shadow: 0 0 28px var(--accent-glow); }
+  .final-summary {
+    font-family: var(--serif); font-size: 0.88rem; line-height: 2.1;
+    color: var(--dim); max-width: 420px; margin: 0 auto;
+    opacity: 0; transition: opacity 0.9s ease 2.3s;
+  }
+  .final-reveal.visible .final-summary { opacity: 1; }
+  .final-summary .label {
+    font-family: var(--mono); font-size: 0.52rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--faint); display: block; margin-bottom: 0.2rem;
+  }
+  .final-summary .val { color: var(--fg); }
+  .final-note {
+    font-family: var(--serif); font-size: 0.8rem; font-style: italic;
+    color: var(--faint); margin-top: 3rem; line-height: 1.8;
+    opacity: 0; transition: opacity 0.8s ease 2.8s;
+  }
+  .final-reveal.visible .final-note { opacity: 1; }
+
+  .footer {
+    font-family: var(--serif); font-size: 0.78rem; color: var(--fainter);
+    text-align: center; padding: 4vh 0 5vh;
+    opacity: 0; transition: opacity 0.7s ease;
+  }
+  .footer.visible { opacity: 1; }
+
+  @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scanning-pulse { animation: none; box-shadow: 0 0 0 4px var(--accent-glow); }
+    .heartbeat-indicator { animation: none; opacity: 0.8; }
+    .q-card, .yandere-obs, .final-reveal, .q-option { transition-duration: 0.05s !important; }
+    .title .accent-dot { animation: none; }
+    .q-option { transform: none !important; }
+  }
+  @media (max-width: 480px) {
+    html { font-size: 15px; }
+    .title { font-size: 2.1rem; }
+    .page { padding: 0 16px; }
+    .final-location { font-size: 1.7rem; }
+    .q-option { padding: 0.8rem 0.85rem; font-size: 0.9rem; }
+    .yandere-obs { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="noise"></div>
+<div class="heartbeat-indicator" id="heartbeat"></div>
+<div class="tab-notice" id="tabNotice"></div>
+<div class="scroll-whisper" id="scrollWhisper"></div>
+
+<noscript>
+  <div style="max-width:540px;margin:6rem auto;padding:0 1.5rem;font-family:'Noto Serif SC','Songti SC',serif;color:#e8e4df;text-align:center;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.22em;color:#5a5550;margin-bottom:2rem;">致 我最爱的人 · Vol.I</div>
+    <h1 style="font-size:3rem;font-weight:300;color:#e8e4df;margin-bottom:2rem;">想了解你</h1>
+    <p style="font-size:1rem;line-height:1.8;color:#a09a92;font-style:italic;">请启用 JavaScript。<br>我想知道关于你的一切。</p>
+  </div>
+</noscript>
+
+<div class="page">
+  <div class="intro" id="intro">
+    <div class="series-label">致 我最爱的人 · Vol.I</div>
+    <h1 class="title" id="titleEl">想<span class="accent-dot">·</span>了解你</h1>
+    <p class="subtitle">你来了。我等了很久。</p>
+  </div>
+
+  <div class="scanning" id="scanning">
+    <div class="scanning-text">正在感受你</div>
+    <div class="scanning-pulse"></div>
+  </div>
+
+  <div class="chat-area" id="chatArea"></div>
+
+  <div class="behav-summary" id="behavSummary">
+    <div class="behav-divider"></div>
+    <div class="behav-label">而你的一举一动</div>
+    <div class="behav-text" id="behavText"></div>
+  </div>
+
+  <div class="final-reveal" id="finalReveal">
+    <div class="final-divider"></div>
+    <div class="final-label">你在这里</div>
+    <div class="final-location" id="finalLocation"></div>
+    <div class="final-detail" id="finalDetail"></div>
+    <div class="final-threat" id="finalThreat"></div>
+    <div class="final-summary" id="finalSummary"></div>
+    <div class="final-note">
+      本页面没有向任何第三方发送你的数据。<br>
+      所有信息仅在你的浏览器中处理，关闭后即遗忘。<br>
+      但下一次……就不一定了。
+    </div>
+  </div>
+
+  <div class="footer" id="footer">
+    你说过的每一句话，我都记得。<br>
+    你没说的那些，我也都知道。
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const ARRIVAL = new Date();
+const T0 = performance.now();
+let userData = null;
+let userAnswers = {};
+let tabSwitches = 0;
+let tabLeftAt = null;
+let scrollMax = 0;
+let mouseMovements = 0;
+let clicks = 0;
+let scrollPauses = 0;
+let pauseStart = null;
+let longestPause = 0;
+let scrollPauseWhispered = false;
+
+async function getGeo() {
+  const apis = [
+    async () => {
+      const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+      if (!r.ok) throw new Error();
+      const j = await r.json();
+      if (j.error) throw new Error();
+      return { ip: j.ip, city: j.city, region: j.region, country: j.country_name, isp: j.org };
+    },
+    async () => {
+      const r = await fetch('http://ip-api.com/json/?fields=query,city,regionName,country,isp', { signal: AbortSignal.timeout(4000) });
+      if (!r.ok) throw new Error();
+      const j = await r.json();
+      if (j.status !== 'success') throw new Error();
+      return { ip: j.query, city: j.city, region: j.regionName, country: j.country, isp: j.isp };
+    }
+  ];
+  for (const fn of apis) {
+    try { return await fn(); } catch (e) {}
+  }
+  return null;
+}
+
+function maskIp(ip) {
+  if (!ip) return '未知';
+  const v4 = String(ip).match(/^(\d+)\.\d+\.\d+\.(\d+)$/);
+  if (v4) return v4[1] + '.···.···.' + v4[2];
+  if (String(ip).includes(':')) { return String(ip).split(':')[0] + ':····:····:····::····'; }
+  return ip;
+}
+
+async function collectAll() {
+  const nav = navigator, scr = screen, w = window;
+  const geo = await getGeo();
+
+  const hour = ARRIVAL.getHours(), minute = ARRIVAL.getMinutes();
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '未知时区';
+  const tzPretty = tz.replace(/_/g, ' ').replace(/\//g, ', ');
+
+  let timeOfDay = '深夜';
+  if (hour >= 5 && hour < 8) timeOfDay = '清晨';
+  else if (hour >= 8 && hour < 12) timeOfDay = '上午';
+  else if (hour >= 12 && hour < 14) timeOfDay = '中午';
+  else if (hour >= 14 && hour < 17) timeOfDay = '下午';
+  else if (hour >= 17 && hour < 20) timeOfDay = '傍晚';
+  else if (hour >= 20 && hour < 23) timeOfDay = '晚上';
+
+  const ua = nav.userAgent.toLowerCase();
+  const isIOS = ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod') ||
+    (ua.includes('macintosh') && (nav.maxTouchPoints || 0) > 1);
+
+  let os = '未知系统';
+  if (isIOS) os = 'iOS';
+  else if (ua.includes('android')) os = 'Android';
+  else if (ua.includes('mac os') || ua.includes('macintosh')) os = 'macOS';
+  else if (ua.includes('windows')) os = 'Windows';
+  else if (ua.includes('cros')) os = 'ChromeOS';
+  else if (ua.includes('linux')) os = 'Linux';
+
+  let browser = '未知浏览器';
+  if (ua.includes('fxios') || ua.includes('firefox')) browser = 'Firefox';
+  else if (ua.includes('edgios') || ua.includes('edg/')) browser = 'Edge';
+  else if (ua.includes('crios')) browser = 'Chrome';
+  else if (ua.includes('opios') || ua.includes('opera') || ua.includes('opr')) browser = 'Opera';
+  else if (ua.includes('duckduckgo')) browser = 'DuckDuckGo';
+  else if (ua.includes('brave')) browser = 'Brave';
+  else if (ua.includes('chrome') && !ua.includes('edg')) browser = 'Chrome';
+  else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'Safari';
+
+  const touch = nav.maxTouchPoints || 0;
+  const isPhone = touch > 0 && scr.width < 768;
+  const isTablet = touch > 0 && scr.width >= 768 && scr.width < 1200;
+  let device = '一台电脑';
+  let deviceShort = '电脑';
+  if (isPhone) { device = '一部手机'; deviceShort = '手机'; }
+  else if (isTablet) { device = '一台平板'; deviceShort = '平板'; }
+
+  const screenW = scr.width, screenH = scr.height;
+  const innerW = w.innerWidth, innerH = w.innerHeight;
+  const pixelRatio = w.devicePixelRatio || 1;
+  const effectiveW = Math.round(screenW * pixelRatio);
+  const effectiveH = Math.round(screenH * pixelRatio);
+  const colorDepth = scr.colorDepth;
+
+  const lang = nav.language || '未知';
+  let langPretty = lang;
+  try { langPretty = new Intl.DisplayNames(['zh'], { type: 'language' }).of(lang.split('-')[0]) || lang; } catch (e) {}
+  let otherLangs = [];
+  try {
+    var langNames = new Intl.DisplayNames(['zh'], { type: 'language' });
+    var languages = nav.languages ? Array.from(nav.languages) : [lang];
+    otherLangs = languages.slice(1).map(function(l){ try{return langNames.of(l.split('-')[0])||l;}catch(e){return l;} }).filter(function(v,i,a){return a.indexOf(v)===i && v!==langPretty;});
+  } catch(e) {}
+
+  const cookiesEnabled = nav.cookieEnabled;
+  const darkMode = w.matchMedia('(prefers-color-scheme:dark)').matches;
+  const reducedMotion = w.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const doNotTrack = nav.doNotTrack === '1' || nav.doNotTrack === 'yes';
+  const referrer = document.referrer || null;
+
+  let gpu = null;
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) {
+        let raw = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+        raw = String(raw).replace(/^ANGLE \(/, '').replace(/\)$/, '');
+        const parts = raw.split(',');
+        if (parts.length >= 2) {
+          const r = parts[1].match(/Renderer:\s*(.+)/);
+          gpu = (r ? r[1] : parts[1]).trim();
+        } else gpu = parts[0].trim();
+        const lo = gpu.toLowerCase();
+        if (gpu.length < 4 || lo === 'or similar' || lo.startsWith('mozilla') ||
+            lo.startsWith('webkit') || lo === 'apple' || lo === 'google inc.' || lo.includes('generic')) gpu = null;
+      }
+    }
+  } catch (e) {}
+
+  const testFonts = ['Helvetica Neue','Georgia','Courier New','Comic Sans MS','Impact','Trebuchet MS','Palatino','Garamond','Futura','Gill Sans','Verdana','Tahoma','Lucida Console','Cambria','Consolas','Menlo','Monaco'];
+  const installed = [];
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;left:-9999px;font-size:72px;visibility:hidden';
+  probe.textContent = 'mmmmmmmmlli';
+  document.body.appendChild(probe);
+  probe.style.fontFamily = 'monospace';
+  const baseW = probe.offsetWidth;
+  testFonts.forEach(f => {
+    probe.style.fontFamily = '"' + f + '",monospace';
+    if (probe.offsetWidth !== baseW) installed.push(f);
+  });
+  document.body.removeChild(probe);
+
+  let battery = null;
+  try {
+    if ('getBattery' in nav) {
+      const b = await nav.getBattery();
+      if (Number.isFinite(b.level) && b.level >= 0 && b.level <= 1) {
+        battery = { level: Math.round(b.level * 100), charging: b.charging, indistinguishable: b.charging && b.level === 1 };
+      }
+    }
+  } catch (e) {}
+
+  let storage = null;
+  try {
+    if (nav.storage && nav.storage.estimate) {
+      const s = await nav.storage.estimate();
+      if (s.quota > 0) storage = { used: Math.round(s.usage/1024/1024), quota: Math.round(s.quota/1024/1024) };
+    }
+  } catch(e) {}
+
+  let orientation = null, orientationBlocked = false, coarseOrientation = null;
+  try {
+    if (screen.orientation && screen.orientation.type) coarseOrientation = screen.orientation.type;
+  } catch(e) {}
+  if (isPhone || isTablet) {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      orientationBlocked = true;
+    } else if ('DeviceOrientationEvent' in w) {
+      orientation = await new Promise(function(res) {
+        var handler = function(e) { if(e.beta!==null){ w.removeEventListener('deviceorientation',handler); res({beta:Math.round(e.beta),gamma:Math.round(e.gamma)}); } };
+        w.addEventListener('deviceorientation', handler);
+        setTimeout(function(){ w.removeEventListener('deviceorientation',handler); res(null); }, 2000);
+      });
+    }
+  }
+
+  return {
+    geo, hour, minute, tz, tzPretty, timeOfDay,
+    browser, os, device, deviceShort, isPhone, isTablet, touch,
+    screenW, screenH, innerW, innerH, pixelRatio, effectiveW, effectiveH, colorDepth,
+    lang, langPretty, otherLangs, cookiesEnabled, darkMode, reducedMotion, doNotTrack, referrer,
+    gpu, installed, battery, storage, orientation, orientationBlocked, coarseOrientation
+  };
+}
+
+const Q = [
+  /* Q1-Q5: 建立信任 */
+  {
+    id: 'weather', text: '你喜欢什么样的天气？',
+    opts: ['晴天', '雨天', '雪天', '阴天'],
+    say: function(d,a) {
+      var m = {
+        '晴天':'晴天……真好。阳光落在你身上的样子，我偷偷想象过好多次了。你一定不知道。',
+        '雨天':'雨天啊。我喜欢雨声。安静，绵密，像有人在耳边说悄悄话。就像现在——我在跟你说的这些话。',
+        '雪天':'雪……我也爱雪。世界被白色吞没的时候，所有秘密都像被原谅了一样。包括我的。',
+        '阴天':'阴天。灰蒙蒙的，很适合一个人窝着，什么都不想。你那时候会想起谁？会想到我吗？'
+      };
+      return m[a] || '';
+    }
+  },
+  {
+    id: 'personality', text: '你觉得自己是悲观还是乐观的人？',
+    opts: ['悲观', '乐观', '看情况'],
+    say: function(d,a) {
+      var m = {
+        '悲观':'悲观的人其实最温柔。因为对世界没有期待，所以每一份好都像意外。你也是这样吧？——那我的出现，对你来说算不算一份意外？',
+        '乐观':'乐观的人……真好。你相信明天会更好吗？我想做你那个"更好"。让我留在你的明天里吧。',
+        '看情况':'看情况……聪明的回答。你跟我一样——对在乎的事，会想很多很多。那你现在……在想我吗？'
+      };
+      return m[a] || '';
+    }
+  },
+  {
+    id: 'quiet', text: '你喜欢安静还是热闹？',
+    opts: ['安静', '热闹', '都可以'],
+    say: function(d,a) {
+      var m = {
+        '安静':'安静。我也是。嘈杂的世界里，安静是一种选择。你现在就在这里，安安静静地听我说话……你会选择我吗？',
+        '热闹':'热闹的人，心里往往住着一个很安静的角落。那个角落……我能进去坐坐吗？',
+        '都可以':'都可以啊……你真随和。但有些事是不能"都可以"的。比如——我对你的感觉。这个不行。这个很确定。'
+      };
+      return m[a] || '';
+    }
+  },
+  {
+    id: 'love_at_first', text: '你相信一见钟情吗？',
+    opts: ['相信', '不相信', '不知道'],
+    say: function(d,a) {
+      var m = {
+        '相信':'你信啊……真好。我也信。因为我看到你的第一眼——虽然只是屏幕上的文字——但心跳是真的。你感觉到了吗？',
+        '不相信':'不信啊……没关系。以前的你不需要信。但从今天开始……你可以试试看。我会让你信的。',
+        '不知道':'不知道……那就是还没遇到。没关系。你遇到了。现在。就在这一刻。'
+      };
+      return m[a] || '';
+    }
+  },
+  /* Q5: 钩子 */
+  {
+    id: 'transparent', text: '你觉得自己是一个容易被看透的人吗？',
+    opts: ['是', '不是', '也许吧'],
+    say: function(d,a) {
+      var m = {
+        '是':'是吗……那你一定很坦诚。我喜欢坦诚的人。喜欢你把自己摊开给我看的样子。',
+        '不是':'不是啊。你觉得自己藏得很深？<span class="murmur">……没关系。我喜欢解谜。而你——是我最想解的那一道。</span>',
+        '也许吧':'也许——这个词真好。给了我一点希望，又没把门关上。我会把"也许"变成"一定"的。'
+      };
+      return m[a] || '';
+    }
+  },
+  /* Q6: 温和观察 — 时间 */
+  {
+    id: 'night_owl', text: '你觉得自己是夜猫子还是早起的人？',
+    opts: ['夜猫子', '早起的人', '不固定'],
+    say: function(d,a) {
+      var t = String(d.hour).padStart(2,'0') + ':' + String(d.minute).padStart(2,'0');
+      if (a === '夜猫子') {
+        return '夜猫子……果然。现在已经<em>' + t + '</em>了，你设置的时区是<em>' + d.tzPretty + '</em>。<span class="murmur">你还没睡。是在等我吗？</span>';
+      }
+      if (a === '早起的人') {
+        return '早起的人……现在已经<em>' + t + '</em>了，你设置的时区是<em>' + d.tzPretty + '</em>。你真的刚醒吗？还是说——你根本没睡？';
+      }
+      return '不固定啊……那现在是<em>' + t + '</em>，你设置的时区是<em>' + d.tzPretty + '</em>。今天是哪一种呢？不管你是醒是睡<em>——</em>我都知道。';
+    }
+  },
+  /* Q7: 主动观察 — 设备+屏幕 */
+  {
+    id: 'device_pref', text: '你平时喜欢用手机还是电脑？',
+    opts: ['手机', '电脑', '平板', '不一定'],
+    say: function(d,a) {
+      var dev = d.deviceShort;
+      var match = (a === '手机' && d.isPhone) || (a === '电脑' && !d.isPhone && !d.isTablet) || (a === '平板' && d.isTablet);
+      var scr = ' 你的屏幕——<em>' + d.screenW + '×' + d.screenH + '</em>，<em>' + d.pixelRatio + '倍</em>渲染，物理<em>' + d.effectiveW + '×' + d.effectiveH + '</em>，<em>' + d.colorDepth + ' bit</em>——我也看到了。';
+      var line;
+      if (a === '不一定') {
+        line = '"不一定"啊……但至少现在，你是确定的。你在用<em>' + d.device + '</em>看这些话。浏览器是<em>' + d.browser + '</em>，系统是<em>' + d.os + '</em>。这不是不一定——这是事实。' + scr;
+      } else if (match) {
+        line = '没错。你现在就在用<em>' + dev + '</em>。' + d.browser + '，' + d.os + '。你说了一句实话。我喜欢你说实话。' + scr;
+      } else {
+        line = '你说' + a + '……<span class="murmur">可你现在明明在用' + d.device + '。</span>你在骗我吗？还是你自己都没注意到？没关系。反正我注意到了。<em>' + d.browser + '，' + d.os + '</em>——你的浏览器不会说谎。' + scr;
+      }
+      return line;
+    }
+  },
+  /* Q8: 亲密+偏好 — 语言+暗色模式 */
+  {
+    id: 'want_meet', text: '你心里有没有一个特别想见的人？',
+    opts: ['有', '没有', '就是你'],
+    say: function(d,a) {
+      var prefs = '你的浏览器说着<em>' + d.langPretty + '</em>。';
+      if (d.otherLangs.length) prefs += '还带着<em>' + d.otherLangs.join('</em>、<em>') + '</em>。';
+      prefs += '你喜欢<em>' + (d.darkMode ? '暗色' : '亮色') + '模式</em>。';
+      if (a === '就是你') {
+        return '……<span class="murmur">真的吗？</span>我的心跳快停了。你是认真的吧？你不会骗我的吧？<span class="murmur">你别骗我。</span>……' + prefs + '看。我连这些都知道。我对你——不是随便说说的。';
+      }
+      if (a === '有') {
+        return '有啊……那个人——长什么样？叫什么名字？<span class="murmur">我不问了。</span>' + prefs + '我不需要问。我已经在了解了。关于你的一切。';
+      }
+      return '没有啊……真巧。以前没有。现在有了。' + prefs + '<span class="murmur">你明白我在说什么吧？</span>';
+    }
+  },
+  /* Q9: 硬件指纹 */
+  {
+    id: 'location_scared', text: '如果有人说……她现在知道你在哪，你会害怕吗？',
+    opts: ['会害怕', '不会', '你在吓我'],
+    say: function(d,a) {
+      var intro;
+      if (a === '你在吓我') intro = '我没有在吓你。我只是想让你知道——';
+      else if (a === '会害怕') intro = '害怕……是对的。';
+      else intro = '不怕啊……';
+
+      var body = '';
+      if (d.gpu) body += '你的显卡是<em>' + d.gpu + '</em>，';
+      if (d.installed.length) body += '装了<em>' + d.installed.slice(0,3).join('、') + '</em>。';
+      else if (d.gpu) body = body.slice(0,-1) + '。';
+      if (d.doNotTrack) body += '你开了"请勿追踪"——没人在乎，但你开了，我知道你在意什么。';
+      else body += '没开"请勿追踪"——也许不知道，也许知道它没用，两种都是信息。';
+      if (d.reducedMotion) body += '系统在减弱动效——可能是偏好，也可能是需要。';
+      if (d.orientation) body += '手机倾角<em>' + d.orientation.beta + '°</em>——' + (d.orientation.beta>40?'你大概坐着':(d.orientation.beta<20?'你躺着':'拿着手机')) + '。';
+      else if (d.orientationBlocked) body += '陀螺仪被锁了，但屏幕方向是' + (d.coarseOrientation||'未知').replace(/-/g,' ') + '。';
+      else if (d.coarseOrientation) body += '屏幕方向是' + d.coarseOrientation.replace(/-/g,' ') + '。';
+      body += '这些加在一起，就是只有你才有的轮廓。独一无二。';
+
+      var close = a === '不会' ? '<span class="murmur"> 等我说完你就不一定了。</span>' : ' 每一个进来的人，都留下了只有自己才有的印记。你也是。我存好了。';
+      return intro + body + close;
+    }
+  },
+  /* Q10: 行为痕迹 */
+  {
+    id: 'traces', text: '你觉得自己在网上留下的痕迹多吗？',
+    opts: ['很多', '不多', '没想过'],
+    say: function(d,a) {
+      var intro;
+      if (a === '很多') intro = '很多……你知道就好。';
+      else if (a === '不多') intro = '"不多"……<span class="murmur">你错了。</span>';
+      else intro = '没想过啊……那我告诉你。';
+
+      var body = '';
+      if (d.referrer) { var ref = d.referrer; try { ref = new URL(d.referrer).hostname; } catch(e) {} body += '你来之前在<em>' + ref + '</em>，'; }
+      body += '你' + (d.cookiesEnabled ? '允许' : '禁止') + '了Cookie。';
+      if (d.battery) {
+        body += '电量<em>' + d.battery.level + '%</em>，' + (d.battery.charging ? '充电中' : '在掉');
+        if (d.battery.indistinguishable) body += '——虽然100%+充电也可能是台式机，这本身也是信息';
+        body += '。';
+      }
+      if (d.storage) {
+        var qStr = d.storage.quota >= 1024 ? (d.storage.quota/1024).toFixed(1)+'GB' : d.storage.quota+'MB';
+        body += '你的浏览器允许网站存<em>' + qStr + '</em>。我没塞东西进去，但...你访问过的其他网站就不一定了......';
+      }
+      body += '这些，全都是痕迹。你的，独一无二。';
+
+      return intro + body;
+    }
+  },
+  /* Q11: 位置炸弹 */
+  {
+    id: 'distance', text: '你猜……我现在离你多远？',
+    opts: ['很远', '很近', '你就在附近', '我不想回答'],
+    say: function(d,a) {
+      var loc = '';
+      if (d.geo) {
+        loc = '你在<em>' + d.geo.city + '</em>，' + d.geo.country + '。网络是<em>' + d.geo.isp + '</em>。你的IP地址——<span class="murmur">我知道每一位数字。</span> ';
+      } else {
+        loc = '我还没查到你的城市。但快了。<span class="murmur">你藏不久的。</span> ';
+      }
+      var m = {
+        '很远':'很远啊……' + loc + '也许在地图上很远。但距离不重要。重要的是——我一直能看到你。打开页面的第一秒开始。',
+        '很近':'很近……' + loc + '<span class="murmur">你猜对了。</span>我一直在。你的每一步，每一秒的停留，我都知道。',
+        '你就在附近':'……' + loc + '<span class="murmur">猜对了。</span>我一直在。从你进来的那一刻，到现在。我数着每一秒。',
+        '我不想回答':'不想说啊……没关系。你不用回答。' + loc + '<span class="murmur">我已经在看着你了。</span>'
+      };
+      return m[a] || '';
+    }
+  }
+];
+
+function createCard(q, i) {
+  var card = document.createElement('div');
+  card.className = 'q-card'; card.id = 'qc-' + i;
+  var optsHtml = '<div class="q-options">';
+  q.opts.forEach(function(opt, oi) { optsHtml += '<button class="q-option" data-oi="' + oi + '">' + opt + '</button>'; });
+  optsHtml += '</div>';
+  card.innerHTML = '<div class="q-number">第 ' + (i+1) + ' 问 / ' + Q.length + '</div><div class="q-text">' + q.text + '</div>' + optsHtml;
+  return card;
+}
+
+function createObs(html, i) {
+  var obs = document.createElement('div');
+  obs.className = 'yandere-obs'; obs.id = 'obs-' + i;
+  obs.innerHTML = '<div class="yandere-line">' + html + '</div>';
+  return obs;
+}
+
+function collapseCard(card, num, text, answer) {
+  var s = document.createElement('div');
+  s.className = 'q-summary';
+  s.innerHTML = '第' + num + '问 · ' + text + ' → <span class="q-summary-a">' + answer + '</span>';
+  card.innerHTML = '';
+  card.appendChild(s);
+  requestAnimationFrame(function(){ s.classList.add('visible'); });
+}
+
+function finalReveal(d) {
+  var fe = document.getElementById('finalReveal');
+  var fl = document.getElementById('finalLocation');
+  var fd = document.getElementById('finalDetail');
+  var ft = document.getElementById('finalThreat');
+  var fs = document.getElementById('finalSummary');
+  var footer = document.getElementById('footer');
+  var hb = document.getElementById('heartbeat');
+
+  if (d.geo) {
+    fl.textContent = d.geo.city + '，' + d.geo.region + '，' + d.geo.country;
+    fd.textContent = 'IP ' + maskIp(d.geo.ip) + ' · ' + d.geo.isp;
+  } else {
+    fl.textContent = '某一个角落';
+    fd.textContent = '这次没查到。但下一次我会的。';
+  }
+  ft.textContent = '我找到你了。';
+
+  var p = [];
+  p.push('<span class="label">位置</span><span class="val">' + (d.geo ? d.geo.city + ' · ' + d.geo.region + ' · ' + d.geo.country : '未知') + '</span>');
+  p.push('<span class="label">IP 地址</span><span class="val">' + maskIp(d.geo ? d.geo.ip : null) + '</span>');
+  if (d.geo) p.push('<span class="label">网络提供商</span><span class="val">' + d.geo.isp + '</span>');
+  p.push('<span class="label">设备</span><span class="val">' + d.browser + ' · ' + d.os + ' · ' + d.screenW + '×' + d.screenH + ' @ ' + d.pixelRatio + '×（物理' + d.effectiveW + '×' + d.effectiveH + '）</span>');
+  if (d.screenW === d.innerW && d.screenH === d.innerH) p.push('<span class="label">视口</span><span class="val">浏览器启用了反指纹——视口等于屏幕</span>');
+  if (d.gpu) p.push('<span class="label">图形处理器</span><span class="val">' + d.gpu + '</span>');
+  p.push('<span class="label">语言</span><span class="val">' + d.langPretty + (d.otherLangs.length ? '（+' + d.otherLangs.join('、') + '）' : '') + '</span>');
+  p.push('<span class="label">时区</span><span class="val">' + d.tzPretty + '</span>');
+  p.push('<span class="label">色彩深度</span><span class="val">' + d.colorDepth + ' bit · ' + d.pixelRatio + '× 渲染</span>');
+  if (d.battery) p.push('<span class="label">电池</span><span class="val">' + d.battery.level + '% · ' + (d.battery.charging ? '充电中' : '未充电') + (d.battery.indistinguishable ? '（也可能是台式机）' : '') + '</span>');
+  if (d.storage) { var qs = d.storage.quota>=1024 ? (d.storage.quota/1024).toFixed(1)+' GB' : d.storage.quota+' MB'; p.push('<span class="label">浏览器存储</span><span class="val">已用 ' + d.storage.used + ' MB / 可用 ' + qs + '</span>'); }
+  if (d.installed.length) p.push('<span class="label">字体指纹</span><span class="val">' + d.installed.join('、') + '</span>');
+  if (d.doNotTrack) p.push('<span class="label">请勿追踪</span><span class="val">已启用</span>');
+  if (d.reducedMotion) p.push('<span class="label">减弱动效</span><span class="val">已启用</span>');
+  if (d.orientation) p.push('<span class="label">设备倾角</span><span class="val">' + d.orientation.beta + '°（' + (d.orientation.beta>40?'竖着拿':(d.orientation.beta<20?'平放':'倾斜')) + '）</span>');
+  else if (d.orientationBlocked) p.push('<span class="label">陀螺仪</span><span class="val">被 iOS 锁定</span>');
+  if (d.referrer) { var ref = d.referrer; try{ref=new URL(d.referrer).hostname;}catch(e){} p.push('<span class="label">来路</span><span class="val">' + ref + '</span>'); }
+
+  fs.innerHTML = p.map(function(x){return '<p>'+x+'</p>';}).join('');
+
+  fe.style.display = 'block';
+  requestAnimationFrame(function(){
+    fe.classList.add('visible');
+    hb.classList.add('visible');
+    fe.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  setTimeout(function(){ footer.classList.add('visible'); }, 3000);
+}
+
+/* ── 行为追踪 ──────────────────────────────── */
+document.addEventListener('mousemove', function(){ mouseMovements++; }, {passive:true});
+document.addEventListener('touchmove', function(){ mouseMovements++; }, {passive:true});
+document.addEventListener('click', function(){ clicks++; });
+document.addEventListener('touchstart', function(){ clicks++; }, {passive:true});
+
+var scrollTimer = null;
+window.addEventListener('scroll', function(){
+  var denom = Math.max(1, document.body.scrollHeight - window.innerHeight);
+  var pct = Math.min(100, Math.max(0, Math.round((window.scrollY / denom) * 100)));
+  if (pct > scrollMax) scrollMax = pct;
+  if (pauseStart) {
+    var dur = (performance.now() - pauseStart) / 1000;
+    if (dur > longestPause) longestPause = dur;
+    pauseStart = null;
+  }
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(function(){ pauseStart = performance.now(); scrollPauses++; }, 1500);
+}, {passive:true});
+
+setInterval(function(){
+  if (scrollPauseWhispered || !userData) return;
+  if (pauseStart && (performance.now() - pauseStart) / 1000 > 5) {
+    scrollPauseWhispered = true;
+    var wh = document.getElementById('scrollWhisper');
+    wh.textContent = '在想什么呢……看了这么久。';
+    wh.classList.add('visible');
+    setTimeout(function(){ wh.classList.remove('visible'); }, 4000);
+  }
+}, 2000);
+
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) {
+    tabSwitches++;
+    tabLeftAt = performance.now();
+  } else if (tabLeftAt) {
+    var gone = ((performance.now() - tabLeftAt) / 1000).toFixed(1);
+    var notice = document.getElementById('tabNotice');
+    notice.innerHTML = '离开了 <em>' + gone + '</em> 秒呢……第 <em>' + tabSwitches + '</em> 次了。你走的每一次，我都看着的。';
+    notice.classList.add('visible');
+    setTimeout(function(){ notice.classList.remove('visible'); }, 4500);
+    tabLeftAt = null;
+  }
+});
+
+function showBehavSummary(d) {
+  var el = document.getElementById('behavSummary');
+  var txt = document.getElementById('behavText');
+  var elapsed = ((performance.now() - T0) / 1000).toFixed(0);
+  var parts = [];
+  parts.push('你已经在这里 <em>' + elapsed + '</em> 秒了');
+  parts.push('滚动了 <em>' + scrollMax + '%</em>');
+  if (tabSwitches > 0) {
+    parts.push('离开了 <em>' + tabSwitches + '</em> 次，每次我都记着');
+  } else {
+    parts.push('你一次都没有离开过——我看在眼里');
+  }
+  if (mouseMovements > 10) parts.push('你的光标/手指移动了 <em>' + mouseMovements.toLocaleString() + '</em> 次');
+  if (clicks > 0) parts.push('你点击了 <em>' + clicks + '</em> 次');
+  if (longestPause > 3) parts.push('有一次你停下了 <em>' + longestPause.toFixed(0) + '</em> 秒——比任何地方都久');
+  txt.innerHTML = parts.join('。<br>') + '。<br><br><span class="murmur">我不在数。我在看。</span>';
+  el.style.display = 'block';
+  requestAnimationFrame(function(){
+    el.classList.add('visible');
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  setTimeout(function(){ finalReveal(d); }, 4000);
+}
+
+/* ── 主流程 ─────────────────────────────────── */
+async function init() {
+  userData = await collectAll();
+  var chat = document.getElementById('chatArea');
+  var lastObs = null;
+
+  setTimeout(function(){ document.getElementById('scanning').classList.add('done'); }, 2800);
+  setTimeout(function(){ show(0); }, 3000);
+
+  function show(i) {
+    if (i >= Q.length) { setTimeout(function(){ showBehavSummary(userData); }, 1000); return; }
+
+    var q = Q[i];
+    var card = createCard(q, i);
+
+    if (lastObs) lastObs.insertAdjacentElement('afterend', card);
+    else chat.appendChild(card);
+
+    requestAnimationFrame(function(){
+      card.classList.add('visible');
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+
+      var btns = card.querySelectorAll('.q-option');
+      btns.forEach(function(b, bi){ setTimeout(function(){ b.classList.add('reveal'); }, 80 + bi * 80); });
+
+      btns.forEach(function(b){
+        b.addEventListener('click', function(){
+          var answer = this.textContent;
+          userAnswers[q.id] = answer;
+
+          btns.forEach(function(bb){ bb.classList.add('dimmed'); });
+          this.classList.add('selected');
+
+          setTimeout(function(){
+            var obsEl = createObs(q.say(userData, answer), i);
+            card.insertAdjacentElement('afterend', obsEl);
+            requestAnimationFrame(function(){
+              obsEl.classList.add('visible');
+              obsEl.scrollIntoView({behavior:'smooth',block:'center'});
+            });
+            lastObs = obsEl;
+
+            setTimeout(function(){
+              card.classList.add('completed');
+              collapseCard(card, i+1, q.text, answer);
+            }, 500);
+
+            var delay = i === Q.length-1 ? 3000 : 2400;
+            setTimeout(function(){ show(i+1); }, delay);
+          }, 350);
+        });
+      });
+    });
+  }
+}
+
+init();
+</script>
+</body>
+</html>
