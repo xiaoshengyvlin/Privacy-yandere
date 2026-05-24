@@ -470,32 +470,15 @@ function fetchWithTimeout(url, opts, ms) {
 }
 
 async function getGeo() {
-  const apis = [
-    async function() {
-      const r = await fetchWithTimeout('https://ip-api.com/json/', null, 4000);
-      if (!r.ok) throw new Error('http');
-      const j = await r.json();
-      if (j.status !== 'success') throw new Error('status');
-      return { ip: j.query, city: j.city, region: j.regionName, country: j.country, isp: j.isp };
-    },
-    async function() {
-      const r = await fetchWithTimeout('https://api.ip.sb/geoip', null, 4000);
-      if (!r.ok) throw new Error('http');
-      const j = await r.json();
-      return { ip: j.ip, city: j.city, region: j.region||'', country: j.country, isp: j.isp||j.organization||'' };
-    },
-    async function() {
-      const r = await fetchWithTimeout('https://ipapi.co/json/', null, 4000);
-      if (!r.ok) throw new Error('http');
-      const j = await r.json();
-      if (j.error) throw new Error('error');
-      return { ip: j.ip, city: j.city, region: j.region, country: j.country_name, isp: j.org };
-    }
-  ];
-  for (var i = 0; i < apis.length; i++) {
-    try { return await apis[i](); } catch (e) {}
+  try {
+    const r = await fetchWithTimeout('/api/geo', null, 4000);
+    if (!r.ok) throw new Error('http');
+    const j = await r.json();
+    if (j.status !== 'success') throw new Error('status');
+    return { ip: j.query, city: j.city, region: j.regionName, country: j.country, isp: j.isp };
+  } catch (e) {
+    return null;
   }
-  return null;
 }
 
 function maskIp(ip) {
